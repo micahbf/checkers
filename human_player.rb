@@ -18,6 +18,8 @@ class HumanPlayer
     end
   end
   
+  private
+  
   def get_move_seq
     print "#{@color}> "
     moves = gets.chomp.downcase.split(/\s*,\s*/)

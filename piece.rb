@@ -9,7 +9,7 @@ class Piece
   JUMP_MOVES_UP = [[-2, 2], [-2, -2]]
   JUMP_MOVES_DOWN = [[2, 2], [2, -2]]
   PROMOTION_ROWS = {:black => 7, :red => 0}
-  MARKS = {:pawn => "\u2b24 ", :king => "\u2605"}
+  MARKS = {:pawn => "\u2b24 ", :king => "\u2605 "}
   
   attr_reader :color
   

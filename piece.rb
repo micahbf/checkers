@@ -42,6 +42,14 @@ class Piece
     Piece.new(board, @color, @king)
   end
   
+  def perform_moves(moves)
+    if valid_move_seq?(moves)
+      perform_moves!(moves)
+    else
+      raise InvalidMoveError, "move invalid"
+    end
+  end
+  
   private
   
   def location

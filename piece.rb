@@ -8,4 +8,7 @@ def Piece
   def location
     @board.piece_coord(self)
   end
+  
+  def slide_moves
+    
 end

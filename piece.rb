@@ -103,19 +103,19 @@ class Piece
   
   def jump_moves
     unless king?
-      jump_moves = (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
+      jump_vectors = (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
     else
-      jump_moves = JUMP_MOVES_DOWN + JUMP_MOVES_UP
+      jump_vectors = JUMP_MOVES_DOWN + JUMP_MOVES_UP
     end
     
-    jump_moves = jump_moves.dup
+    jump_vectors = jump_vectors.dup
     
-    jumped_squares = jump_moves.map { |m| m.map { |c| c / 2 } }
+    jumped_squares = jump_vectors.map { |m| m.map { |c| c / 2 } }
   
-    jump_moves = resulting_locations(jump_moves)
+    poss_jump_moves = resulting_locations(jump_vectors)
     jumped_squares = resulting_locations(jumped_squares)
     
-    jump_moves.zip(jumped_squares).select do |move|
+    poss_jump_moves.zip(jumped_squares).select do |move|
       dest, between = move
       on_board?(dest) &&
         @board.empty?(dest) &&

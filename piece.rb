@@ -42,7 +42,7 @@ class Piece
     jumps_only = (moves.count > 1) ? true : false
     moves.each do |move|
       if slide_moves.include?(move)
-        raise InvalidMoveError if jumps_only
+        raise InvalidMoveError, "Piece must jump" if jumps_only
         perform_slide(move)
       elsif jump_moves.include?(move)
         perform_jump(move)
@@ -111,5 +111,16 @@ class Piece
   
   def on_board?(coord)
     coord.all? { |c| (0..7).cover?(c) }
+  end
+  
+  def valid_move_seq?(moves)
+    duped_board = @board.dup
+    begin
+      duped_board[location].perform_moves!(moves)
+    rescue InvalidMoveError
+      return false
+    else
+      return true
+    end
   end
 end

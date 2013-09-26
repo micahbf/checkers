@@ -40,7 +40,7 @@ class Board
       row.each_with_index do |square, col_i|
         if square.nil?
           bg_color = (dark_square?([row_i, col_i])) ? :white : :light_white
-          print " ".colorize(:background => bg_color)
+          print "  ".colorize(:background => bg_color)
         else
           square.render
         end

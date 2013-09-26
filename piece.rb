@@ -50,11 +50,27 @@ class Piece
     end
   end
   
-  private
-  
   def location
     @board.piece_coord(self)
   end
+  
+  protected
+  
+  def perform_moves!(moves)
+    jumps_only = (moves.count > 1) ? true : false
+    moves.each do |move|
+      if slide_moves.include?(move)
+        raise InvalidMoveError, "Piece must jump" if jumps_only
+        perform_slide(move)
+      elsif jump_moves.include?(move)
+        perform_jump(move)
+      else
+        raise InvalidMoveError, "Move to #{move} not possible"
+      end
+    end
+  end
+  
+  private
   
   def king?
     @king
@@ -115,20 +131,6 @@ class Piece
       return false
     else
       return true
-    end
-  end
-  
-  def perform_moves!(moves)
-    jumps_only = (moves.count > 1) ? true : false
-    moves.each do |move|
-      if slide_moves.include?(move)
-        raise InvalidMoveError, "Piece must jump" if jumps_only
-        perform_slide(move)
-      elsif jump_moves.include?(move)
-        perform_jump(move)
-      else
-        raise InvalidMoveError, "Move to #{move} not possible"
-      end
     end
   end
 end

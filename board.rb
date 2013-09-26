@@ -60,13 +60,16 @@ class Board
     end
     dup_board
   end
-    
-  private
+  
+  protected
   
   def []=(square, to_set)
     row, col = square
     @rows[row][col] = to_set
   end
+    
+  private
+
   
   def square_between(from_sq, to_sq)
     from_row, from_col = from_sq
@@ -92,11 +95,13 @@ class Board
     (row + col).even?
   end
   
-  def make_starting_pieces(color)
-    starting_rows = (color == :black) ? [0, 1, 2] : [5, 6, 7]
-    starting_rows.each do |row|
-      (0..7).each do |col|
-        @rows[row][col] = Piece.new(self, color) if dark_square?([row, col])
+  def make_starting_pieces
+    [:black, :red].each do |color|
+      starting_rows = (color == :black) ? [0, 1, 2] : [5, 6, 7]
+      starting_rows.each do |row|
+        (0..7).each do |col|
+          @rows[row][col] = Piece.new(self, color) if dark_square?([row, col])
+        end
       end
     end
   end
@@ -105,5 +110,9 @@ class Board
     [].tap do |squares|
       (0..7).each { |row| (0..7).each { |col| squares << [row, col] } }
     end
+  end
+  
+  def pieces
+    @rows.flatten.compact
   end
 end

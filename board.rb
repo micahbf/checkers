@@ -38,10 +38,11 @@ class Board
   end
   
   def render
-    @rows.each do |row|
-      row.each do |square|
+    @rows.each_with_index do |row, row_i|
+      row.each_with_index do |square, col_i|
         if square.nil?
-          print " ".on_white
+          bg_color = (dark_square?([row_i, col_i])) ? :white : :light_white
+          print " ".colorize(:background => bg_color)
         else
           square.render
         end

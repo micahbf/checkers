@@ -65,6 +65,10 @@ class Board
     false
   end
   
+  def pieces
+    @rows.flatten.compact
+  end
+  
   protected
   
   def []=(square, to_set)
@@ -108,9 +112,5 @@ class Board
     [].tap do |squares|
       (0..7).each { |row| (0..7).each { |col| squares << [row, col] } }
     end
-  end
-  
-  def pieces
-    @rows.flatten.compact
   end
 end

@@ -59,6 +59,14 @@ class Piece
     @board.piece_coord(self)
   end
   
+  def can_jump?
+    if jump_moves.count > 0
+      return true
+    else
+      return false
+    end
+  end
+  
   protected
   
   def perform_moves!(moves)

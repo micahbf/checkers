@@ -3,11 +3,8 @@ require_relative 'human_player'
 require 'colorize'
 
 class Board
-  def initialize(fill_board = true)
-    @players = {
-      :black => HumanPlayer.new(:black),
-      :red => HumanPlayer.new(:red)
-    }
+  def initialize(players, fill_board = true)
+    @players = players
     make_blank_grid
     make_starting_pieces if fill_board
   end

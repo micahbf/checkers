@@ -51,7 +51,7 @@ class Board
   end
   
   def dup
-    dup_board = Board.new(false)
+    dup_board = Board.new(@players, false)
     pieces.each do |piece|
       dup_board[piece.location] = piece.dup(dup_board)
     end
@@ -59,7 +59,7 @@ class Board
   end
   
   def won?
-    [:black, :red] do |color|
+    [:black, :red].each do |color|
       return color if pieces.all? { |p| p.color == color }
     end
     false
@@ -74,24 +74,18 @@ class Board
     
   private
 
-  
   def square_between(from_sq, to_sq)
     from_row, from_col = from_sq
     to_row, to_col = to_sq
     
-    btw_row = (from_row - to_row) / 2
-    btw_col = (from_col - to_col) / 2
+    btw_row = (from_row + to_row) / 2
+    btw_col = (from_col + to_col) / 2
     
     [btw_row, btw_col]
   end
-  
-  def make_starting_pieces
-    @players.each { |color, player| make_starting_pieces(color) }
-  end
-  
+    
   def make_blank_grid
     @rows = Array.new(8) { Array.new(8) }
-    p @rows
   end
   
   def dark_square?(coord)

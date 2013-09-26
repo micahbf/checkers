@@ -8,6 +8,8 @@ class Piece
   SLIDE_MOVES_DOWN = [[1, 1], [1, -1]]
   JUMP_MOVES_UP = [[-2, 2], [-2, -2]]
   JUMP_MOVES_DOWN = [[2, 2], [2, -2]]
+  PROMOTION_ROWS = {:black => 7, :red => 0}
+  MARKS = {:pawn => "@", :king => "$"}
   
   attr_reader :color
   
@@ -18,7 +20,8 @@ class Piece
   end
   
   def render
-    print "@".colorize(:color => @color, :background => :white)
+    type = @king ? :king : :pawn
+    print MARKS[type].colorize(:color => @color, :background => :white)
   end
   
   def perform_slide(dest_square)
@@ -26,6 +29,7 @@ class Piece
       raise InvalidMoveError, "piece cannot move there"
     end
     @board.move(location, dest_square)
+    promotion_check
     true
   end
   
@@ -35,6 +39,7 @@ class Piece
     end
     @board.capture_between(location, dest_square)
     @board.move(location, dest_square)
+    promotion_check
     true
   end
   
@@ -83,12 +88,7 @@ class Piece
       slide_moves = SLIDE_MOVES_DOWN + SLIDE_MOVES_UP
     end
     
-    slide_moves.map do |move|
-      row, col = location
-      row_diff, col_diff = move
-
-      [row + row_diff, col + col_diff]
-    end.select do |dest|
+    resulting_locations(slide_moves).select do |dest|
       on_board?(dest) && @board.empty?(dest)
     end
   end
@@ -104,8 +104,8 @@ class Piece
     
     jumped_squares = jump_moves.map { |m| m.map { |c| c / 2 } }
   
-    jump_moves.map! { |move| move.zip(location).map { |m, l| m + l } }
-    jumped_squares.map! { |move| move.zip(location).map { |m, l| m + l } }
+    jump_moves = resulting_locations(jump_moves)
+    jumped_squares = resulting_locations(jumped_squares)
     
     jump_moves.zip(jumped_squares).select do |move|
       dest, between = move
@@ -116,6 +116,15 @@ class Piece
     end.map do |move|
       dest, between = move
       dest
+    end
+  end
+  
+  def resulting_locations(moves)
+    moves.map do |move|
+      row, col = location
+      row_diff, col_diff = move
+
+      [row + row_diff, col + col_diff]
     end
   end
   
@@ -131,6 +140,14 @@ class Piece
       return false
     else
       return true
+    end
+  end
+  
+  def promotion_check
+    return if @king
+    row, col = location
+    if row == PROMOTION_ROWS[@color]
+      @king = true
     end
   end
 end

@@ -13,11 +13,15 @@ class Checkers
   def play
     until @board.won?
       current_player = (current_player == :black) ? :red : :black
-      @board.render
-      current_player.play_turn(@board)
+      @players[current_player].play_turn(@board)
     end
     
     puts "#{current_player} wins!"
     @board.render 
   end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  c = Checkers.new
+  c.play
 end

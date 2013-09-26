@@ -38,7 +38,7 @@ class HumanPlayer
     moving_piece = move_seq.shift
     if board[moving_piece].color != @color
       raise InvalidMoveError, "not your checker" 
-    elsif jump_possible?(board) && is_jump?(moving_piece, move_seq)
+    elsif jump_possible?(board) && !is_jump?(moving_piece, move_seq)
       raise InvalidMoveError, "you must jump when possible"
     end
     

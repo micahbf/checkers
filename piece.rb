@@ -67,6 +67,28 @@ class Piece
     end
   end
   
+  protected
+  
+  def perform_moves!(moves)
+    jumps_only = (moves.count > 1) ? true : false
+    moves.each do |move|
+      if slide_moves.include?(move)
+        raise InvalidMoveError, "Piece must jump" if jumps_only
+        perform_slide(move)
+      elsif jump_moves.include?(move)
+        perform_jump(move)
+      else
+        raise InvalidMoveError, "Move to #{move} not possible"
+      end
+    end
+  end
+  
+  private
+  
+  def king?
+    @king
+  end
+  
   def slide_moves
     unless king?
       slide_moves = (@color == :black) ? SLIDE_MOVES_DOWN : SLIDE_MOVES_UP
@@ -103,28 +125,6 @@ class Piece
       dest, between = move
       dest
     end
-  end
-  
-  protected
-  
-  def perform_moves!(moves)
-    jumps_only = (moves.count > 1) ? true : false
-    moves.each do |move|
-      if slide_moves.include?(move)
-        raise InvalidMoveError, "Piece must jump" if jumps_only
-        perform_slide(move)
-      elsif jump_moves.include?(move)
-        perform_jump(move)
-      else
-        raise InvalidMoveError, "Move to #{move} not possible"
-      end
-    end
-  end
-  
-  private
-  
-  def king?
-    @king
   end
   
   def resulting_locations(moves)

@@ -58,6 +58,13 @@ class Board
     dup_board
   end
   
+  def won?
+    [:black, :red] do |color|
+      return color if pieces.all? { |p| p.color == color }
+    end
+    false
+  end
+  
   protected
   
   def []=(square, to_set)

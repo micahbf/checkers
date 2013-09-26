@@ -3,12 +3,13 @@ require_relative 'human_player'
 require 'colorize'
 
 class Board
-  def initialize
+  def initialize(fill_board = true)
     @players = {
       :black => HumanPlayer.new(:black),
       :red => HumanPlayer.new(:red)
     }
-    make_starting_grid
+    make_blank_grid
+    make_starting_pieces if fill_board
   end
   
   def piece_coord(piece)
@@ -52,6 +53,14 @@ class Board
     nil
   end
   
+  def dup
+    dup_board = Board.new(false)
+    pieces.each do |piece|
+      dup_board[piece.location] = piece.dup(dup_board)
+    end
+    dup_board
+  end
+    
   private
   
   def []=(square, to_set)
@@ -69,8 +78,7 @@ class Board
     [btw_row, btw_col]
   end
   
-  def make_starting_grid
-    make_blank_grid
+  def make_starting_pieces
     @players.each { |color, player| make_starting_pieces(color) }
   end
   
@@ -95,7 +103,7 @@ class Board
   
   def squares
     [].tap do |squares|
-      (0..7).each { |row| (0..7).each { |col| squares << [row, col ] } }
+      (0..7).each { |row| (0..7).each { |col| squares << [row, col] } }
     end
   end
 end

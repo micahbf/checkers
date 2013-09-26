@@ -52,6 +52,10 @@ class Piece
     end
   end
   
+  def dup(board)
+    Piece.new(board, @color, @king)
+  end
+  
   private
   
   def location
@@ -75,7 +79,7 @@ class Piece
 
       [row + row_diff, col + col_diff]
     end.select do |dest|
-      @board.empty?(dest)
+      on_board?(dest) && @board.empty?(dest)
     end
   end
   
@@ -86,6 +90,8 @@ class Piece
       jump_moves = JUMP_MOVES_DOWN + JUMP_MOVES_UP
     end
     
+    jump_moves = jump_moves.dup
+    
     jumped_squares = jump_moves.map { |m| m.map { |c| c / 2 } }
   
     jump_moves.map! { |move| move.zip(location).map { |m, l| m + l } }
@@ -93,12 +99,17 @@ class Piece
     
     jump_moves.zip(jumped_squares).select do |move|
       dest, between = move
-      @board.empty?(dest) &&
+      on_board?(dest) &&
+        @board.empty?(dest) &&
         !@board.empty?(between) && 
         @board[between].color != @color
     end.map do |move|
       dest, between = move
       dest
     end
+  end
+  
+  def on_board?(coord)
+    coord.all? { |c| (0..7).cover?(c) }
   end
 end

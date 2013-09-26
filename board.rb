@@ -3,6 +3,8 @@ require_relative 'human_player'
 require 'colorize'
 
 class Board
+  ROWS = "abcdefgh"
+    
   def initialize(players, fill_board = true)
     @players = players
     make_blank_grid
@@ -36,7 +38,9 @@ class Board
   end
   
   def render
+    puts "  1 2 3 4 5 6 7 8 ".yellow
     @rows.each_with_index do |row, row_i|
+      print "#{ROWS[row_i]} ".yellow
       row.each_with_index do |square, col_i|
         if square.nil?
           bg_color = (dark_square?([row_i, col_i])) ? :white : :light_white

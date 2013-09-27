@@ -29,4 +29,16 @@ class ComputerPlayer
     end
     all_moves
   end
+  
+  def possible_jump_moves(board)
+    pieces = board.pieces.select { |p| p.color == @color }
+    all_moves = []
+    pieces.each do |piece|
+      piece.jump_moves.each do |move|
+        board_copy = board.dup
+        
+        all_moves << [piece.location, move] 
+      end
+    end
+  end
 end

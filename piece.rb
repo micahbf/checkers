@@ -67,33 +67,21 @@ class Piece
     end
   end
   
-  def slide_moves
-    unless king?
-      slide_moves = (@color == :black) ? SLIDE_MOVES_DOWN : SLIDE_MOVES_UP
-    else
-      slide_moves = SLIDE_MOVES_DOWN + SLIDE_MOVES_UP
-    end
-    
-    resulting_locations(slide_moves).select do |dest|
-      on_board?(dest) && @board.empty?(dest)
-    end
-  end
-  
   def jump_moves
     unless king?
-      jump_moves = (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
+      jump_vectors = (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
     else
-      jump_moves = JUMP_MOVES_DOWN + JUMP_MOVES_UP
+      jump_vectors = JUMP_MOVES_DOWN + JUMP_MOVES_UP
     end
     
-    jump_moves = jump_moves.dup
+    jump_vectors = jump_vectors.dup
     
-    jumped_squares = jump_moves.map { |m| m.map { |c| c / 2 } }
+    jumped_squares = jump_vectors.map { |m| m.map { |c| c / 2 } }
   
-    jump_moves = resulting_locations(jump_moves)
+    poss_jump_moves = resulting_locations(jump_vectors)
     jumped_squares = resulting_locations(jumped_squares)
     
-    jump_moves.zip(jumped_squares).select do |move|
+    valid_jump_moves = poss_jump_moves.zip(jumped_squares).select do |move|
       dest, between = move
       on_board?(dest) &&
         @board.empty?(dest) &&
@@ -103,6 +91,19 @@ class Piece
       dest, between = move
       dest
     end
+    all_jump_moves = []
+    valid_jump_moves.each do |jump_move|
+      test_board = @board.dup
+      test_board.move(location, jump_move)
+      test_board.render
+      rec_jump_moves = test_board[jump_move].jump_moves
+      p rec_jump_moves
+      return valid_jump_moves if rec_jump_moves.empty?
+      rec_jump_moves.each do |rec_jump_move|
+        all_jump_moves << [jump_move] + [rec_jump_move]
+      end
+    end
+    all_jump_moves
   end
   
   protected
@@ -125,6 +126,18 @@ class Piece
   
   def king?
     @king
+  end
+  
+  def slide_moves
+    unless king?
+      slide_moves = (@color == :black) ? SLIDE_MOVES_DOWN : SLIDE_MOVES_UP
+    else
+      slide_moves = SLIDE_MOVES_DOWN + SLIDE_MOVES_UP
+    end
+    
+    resulting_locations(slide_moves).select do |dest|
+      on_board?(dest) && @board.empty?(dest)
+    end
   end
   
   def resulting_locations(moves)

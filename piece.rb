@@ -44,7 +44,7 @@ class Piece
     jump_moves.count > 0 ? true : false
   end
   
-  def all_moves
+  def all_move_seqs
     can_jump? ? jump_moves : slide_moves
   end
   
@@ -53,15 +53,37 @@ class Piece
   def perform_moves!(moves)
     jumps_only = (moves.count > 1) ? true : false
     moves.each do |move|
-      if slide_moves.include?(move)
+      puts "moves: #{moves} location: #{location} move: #{move}"
+      if slide_moves.include?([move])
         raise InvalidMoveError, "Piece must jump" if jumps_only
         perform_slide(move)
-      elsif jump_moves.include?(move)
+      elsif jump_moves.any? { |ms| ms.include?(move) }
         perform_jump(move)
       else
         raise InvalidMoveError, "Move to #{move} not possible"
       end
     end
+  end
+  
+  def jump_moves    
+    valid_jumps.map do |jump_move|
+      test_piece = perform_test_move(jump_move)
+      rec_jumps = test_piece.jump_moves
+      if rec_jumps.empty?
+        [jump_move]
+      else
+        rec_jumps.map do |rec_jump|
+          rec_jump.unshift(jump_move)
+        end
+      end
+    end
+  end
+  
+  def perform_jump!(dest_square)
+    @board.capture_between(location, dest_square)
+    @board.move(location, dest_square)
+    promotion_check
+    true
   end
   
   private
@@ -70,8 +92,8 @@ class Piece
     @king
   end
   
-  def valid_jumps(jump_vectors)
-    jump_vectors = jump_vectors.dup
+  def valid_jumps
+    jump_vectors = jump_vectors().dup
     
     #gets vectors for squares being jumped over
     jumped_squares = jump_vectors.map { |m| m.map { |c| c / 2 } }
@@ -88,6 +110,14 @@ class Piece
     end
   end
   
+  def jump_vectors
+    unless king?
+      return (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
+    else
+      return JUMP_MOVES_DOWN + JUMP_MOVES_UP
+    end
+  end
+  
   def valid_jump_move?(move)
     #requires a zipped destination and between square
     dest, between = move
@@ -97,9 +127,9 @@ class Piece
       @board[between].color != @color
   end
   
-  def piece_at_test_move(move)
+  def perform_test_move(move)
     test_board = @board.dup
-    test_board.move(location, move)
+    test_board[location].perform_jump!(move)
     test_board[move]
   end
   
@@ -112,29 +142,9 @@ class Piece
     
     resulting_locations(slide_moves).select do |dest|
       on_board?(dest) && @board.empty?(dest)
+    end.map do |dest|
+      [dest]
     end
-  end
-  
-  def jump_moves
-    unless king?
-      jump_vectors = (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
-    else
-      jump_vectors = JUMP_MOVES_DOWN + JUMP_MOVES_UP
-    end
-    
-    valid_jump_moves = valid_jumps(jump_vectors)
-    
-    all_jump_moves = []
-    valid_jump_moves.each do |jump_move|
-      rec_jump_moves = piece_at_test_move(jump_move).jump_moves
-      
-      return valid_jump_moves if rec_jump_moves.empty? #base case
-      
-      rec_jump_moves.each do |rec_jump_move|
-        all_jump_moves << [jump_move] + [rec_jump_move]
-      end
-    end
-    all_jump_moves
   end
   
   def resulting_locations(moves)
@@ -154,7 +164,8 @@ class Piece
     duped_board = @board.dup
     begin
       duped_board[location].perform_moves!(moves)
-    rescue InvalidMoveError
+    rescue InvalidMoveError => e
+      puts e
       return false
     else
       return true
@@ -162,7 +173,7 @@ class Piece
   end
   
   def perform_slide(dest_square)
-    unless slide_moves.include?(dest_square)
+    unless slide_moves.include?([dest_square])
       raise InvalidMoveError, "piece cannot move there"
     end
     @board.move(location, dest_square)
@@ -171,7 +182,7 @@ class Piece
   end
   
   def perform_jump(dest_square)
-    unless jump_moves.include?(dest_square)
+    unless jump_moves.any? { |ms| ms.include?(dest_square) }
       raise InvalidMoveError, "piece cannot jump there"
     end
     @board.capture_between(location, dest_square)

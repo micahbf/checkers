@@ -17,9 +17,7 @@ class ComputerPlayer
     pieces = board.pieces.select { |p| p.color == @color }
     all_moves = []
     pieces.each do |piece|
-      piece.jump_moves.each do |move|
-        all_moves << [piece.location, move] 
-      end
+      piece.jump_moves.each { |move| all_moves << [piece.location, move] }
     end
     return all_moves unless all_moves.empty?
     pieces.each do |piece|

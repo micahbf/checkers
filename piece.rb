@@ -65,7 +65,11 @@ class Piece
     end
   end
   
-  def jump_moves    
+  def jump_moves
+    #path to every leaf on jump moves tree
+  end
+  
+  def jump_moves_old    
     valid_jumps.map do |jump_move|
       test_piece = perform_test_move(jump_move)
       rec_jumps = test_piece.jump_moves

@@ -95,20 +95,6 @@ class Piece
     return path
   end
   
-  def jump_moves_old    
-    valid_jumps.map do |jump_move|
-      test_piece = perform_test_move(jump_move)
-      rec_jumps = test_piece.jump_moves
-      if rec_jumps.empty?
-        [jump_move]
-      else
-        rec_jumps.map do |rec_jump|
-          rec_jump.unshift(jump_move)
-        end
-      end
-    end
-  end
-  
   def perform_jump!(dest_square)
     @board.capture_between(location, dest_square)
     @board.move(location, dest_square)

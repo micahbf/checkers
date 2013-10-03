@@ -66,7 +66,33 @@ class Piece
   end
   
   def jump_moves
-    #path to every leaf on jump moves tree
+    jump_nodes.map do |nodes| 
+      nodes.map { |node| trace_path(node)  }
+    end.flatten(1)
+  end
+  
+  def jump_nodes(parent = nil)
+    self_node = JumpMove.new(parent, self, [])
+    children = valid_jumps.map do |jump|
+      child_piece = dup_and_jump(jump)
+      child_piece.jump_nodes(self_node)
+    end
+    if children.empty?
+      return self_node
+    else
+      return children
+    end
+  end
+  
+  def trace_path(jump_node)
+    path = []
+    curr_node = jump_node
+    until curr_node.nil?
+      p curr_node.piece.location
+      path.unshift(curr_node.piece.location)
+      curr_node = curr_node.parent
+    end
+    return path
   end
   
   def jump_moves_old    
@@ -131,7 +157,7 @@ class Piece
       @board[between].color != @color
   end
   
-  def perform_test_move(move)
+  def dup_and_jump(move)
     test_board = @board.dup
     test_board[location].perform_jump!(move)
     test_board[move]
@@ -203,3 +229,5 @@ class Piece
     end
   end
 end
+
+JumpMove = Struct.new(:parent, :piece, :children)

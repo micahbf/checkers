@@ -69,8 +69,10 @@ class Board
     false
   end
   
-  def pieces
-    @rows.flatten.compact
+  def pieces(color = nil)
+    @rows.flatten.compact.tap do |pieces|
+      pieces.select { |p| p.color == color } if color
+    end
   end
   
   protected

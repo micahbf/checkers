@@ -56,6 +56,10 @@ class Piece
     [0, 7].include?(location[1])
   end
   
+  def opp_color
+    @color == :black ? :red : :black
+  end
+  
   protected
   
   def perform_moves!(moves)

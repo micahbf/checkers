@@ -48,6 +48,14 @@ class Piece
     can_jump? ? jump_moves : slide_moves
   end
   
+  def king?
+    @king
+  end
+  
+  def on_side?
+    [0, 7].include?(location[1])
+  end
+  
   protected
   
   def perform_moves!(moves)
@@ -92,10 +100,6 @@ class Piece
   end
   
   private
-  
-  def king?
-    @king
-  end
   
   def valid_jumps
     poss_jump_moves = resulting_locations(jump_vectors)

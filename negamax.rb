@@ -38,7 +38,7 @@ module Negamax
     
     def children
       children = []
-      @board.pieces(color).each do |piece|
+      @board.pieces(@color).each do |piece|
         piece.all_move_seqs.each do |move_seq|
           child_board = @board.dup
           child_board[piece].perform_moves(move_seq)

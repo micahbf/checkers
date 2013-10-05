@@ -22,6 +22,18 @@ module Negamax
       @value = @board.evaluate
     end
     
+    def children
+      children = []
+      @board.pieces(color).each do |piece|
+        piece.all_move_seqs.each do |move_seq|
+          child_board = @board.dup
+          child_board[piece].perform_moves(move_seq)
+          children << MoveNode.new(child_board, piece.opp_color)
+        end
+      end
+      children
+    end
+    
     def <=>
     end
   end

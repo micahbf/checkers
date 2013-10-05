@@ -1,6 +1,6 @@
 module Negamax
   def negamax(node, depth, alpha, beta, color_sign)
-    return color * node.value if depth == 0 || node.terminal?
+    return color_sign * node.value if depth == 0 || node.terminal?
     best_value = -72.0
     
     node.children.each do |child|

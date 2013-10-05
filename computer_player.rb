@@ -1,11 +1,14 @@
+require_relative 'negamax'
+
 class ComputerPlayer
+  include Negamax
+  
   def initialize(color)
     @color = color
   end
   
   def play_turn(board)
-    moves = all_moves(board)
-    move = moves.sample
+    move = best_move
     play_move(board, move)
   end
   

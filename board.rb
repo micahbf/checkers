@@ -1,8 +1,11 @@
 require_relative 'piece'
 require_relative 'human_player'
+require_relative 'board_evaluation'
 require 'colorize'
 
 class Board
+  include BoardEvaluation
+  
   ROWS = "abcdefgh"
     
   def initialize(players, fill_board = true)

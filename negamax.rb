@@ -1,4 +1,17 @@
 module Negamax
+  def best_move
+    root_node = MoveNode.new(@board, @color, nil)
+    color_sign = (@color == :black) ? 1 : -1
+    
+    move_nodes = {}
+    root_node.children.each do |node|
+      move_nodes[node] = negamax(node, @depth, -72.0, 72.0, color_sign) 
+    end
+    
+    move_nodes.max_by{ |k, v| v }.move_seq
+  end
+    
+  
   def negamax(node, depth, alpha, beta, color_sign)
     return color_sign * node.value if depth == 0 || node.terminal?
     best_value = -72.0
@@ -14,11 +27,12 @@ module Negamax
   end
 
   class MoveNode
-    include Comparable
+    attr_reader move_seq
     
-    def initialize(board, color)
+    def initialize(board, color, move_seq)
       @board = board
       @color = color
+      @move_seq = move_seq
       @value = @board.evaluate
     end
     
@@ -28,13 +42,11 @@ module Negamax
         piece.all_move_seqs.each do |move_seq|
           child_board = @board.dup
           child_board[piece].perform_moves(move_seq)
-          children << MoveNode.new(child_board, piece.opp_color)
+          full_seq = move_seq.dup.unshift(piece.location)
+          children << MoveNode.new(child_board, piece.opp_color, full_seq)
         end
       end
       children
-    end
-    
-    def <=>
     end
   end
 end

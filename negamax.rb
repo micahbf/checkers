@@ -1,6 +1,6 @@
 module Negamax
-  def best_move
-    root_node = MoveNode.new(@board, @color, nil)
+  def best_move(board)
+    root_node = MoveNode.new(board, @color, nil)
     color_sign = (@color == :black) ? 1 : -1
     
     move_nodes = {}
@@ -27,7 +27,7 @@ module Negamax
   end
 
   class MoveNode
-    attr_reader move_seq
+    attr_reader :move_seq
     
     def initialize(board, color, move_seq)
       @board = board

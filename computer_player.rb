@@ -5,10 +5,11 @@ class ComputerPlayer
   
   def initialize(color)
     @color = color
+    @depth = 6
   end
   
   def play_turn(board)
-    move = best_move
+    move = best_move(board)
     play_move(board, move)
   end
   

@@ -71,6 +71,13 @@ class Piece
     end.flatten(1)
   end
   
+  def perform_jump!(dest_square)
+    @board.capture_between(location, dest_square)
+    @board.move(location, dest_square)
+    promotion_check
+    true
+  end
+  
   def jump_nodes(parent = nil)
     self_node = JumpMove.new(parent, self, [])
     children = valid_jumps.map do |jump|
@@ -82,24 +89,6 @@ class Piece
     else
       return children
     end
-  end
-  
-  def trace_path(jump_node)
-    path = []
-    curr_node = jump_node
-    until curr_node.nil?
-      p curr_node.piece.location
-      path.unshift(curr_node.piece.location)
-      curr_node = curr_node.parent
-    end
-    return path
-  end
-  
-  def perform_jump!(dest_square)
-    @board.capture_between(location, dest_square)
-    @board.move(location, dest_square)
-    promotion_check
-    true
   end
   
   private
@@ -147,6 +136,16 @@ class Piece
     test_board = @board.dup
     test_board[location].perform_jump!(move)
     test_board[move]
+  end
+  
+  def trace_path(jump_node)
+    path = []
+    curr_node = jump_node
+    until curr_node.nil?
+      path.unshift(curr_node.piece.location)
+      curr_node = curr_node.parent
+    end
+    return path
   end
   
   def slide_moves

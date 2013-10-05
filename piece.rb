@@ -98,14 +98,8 @@ class Piece
   end
   
   def valid_jumps
-    jump_vectors = jump_vectors().dup
-    
-    #gets vectors for squares being jumped over
-    jumped_squares = jump_vectors.map { |m| m.map { |c| c / 2 } }
-  
-    #adds vectors to current location
     poss_jump_moves = resulting_locations(jump_vectors)
-    jumped_squares = resulting_locations(jumped_squares)
+    jumped_squares = resulting_locations(slide_vectors)
     
     poss_jump_moves.zip(jumped_squares).select do |move|
       valid_jump_move?(move)
@@ -120,6 +114,14 @@ class Piece
       return (@color == :black) ? JUMP_MOVES_DOWN : JUMP_MOVES_UP
     else
       return JUMP_MOVES_DOWN + JUMP_MOVES_UP
+    end
+  end
+  
+  def slide_vectors
+    unless king?
+      slide_moves = (@color == :black) ? SLIDE_MOVES_DOWN : SLIDE_MOVES_UP
+    else
+      slide_moves = SLIDE_MOVES_DOWN + SLIDE_MOVES_UP
     end
   end
   
@@ -148,14 +150,8 @@ class Piece
     return path
   end
   
-  def slide_moves
-    unless king?
-      slide_moves = (@color == :black) ? SLIDE_MOVES_DOWN : SLIDE_MOVES_UP
-    else
-      slide_moves = SLIDE_MOVES_DOWN + SLIDE_MOVES_UP
-    end
-    
-    resulting_locations(slide_moves).select do |dest|
+  def slide_moves    
+    resulting_locations(slide_vectors).select do |dest|
       on_board?(dest) && @board.empty?(dest)
     end.map do |dest|
       [dest]

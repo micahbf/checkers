@@ -16,9 +16,9 @@ class Board
   
   def piece_coord(piece)
     squares.each do |square|
-      row, col = square
       return square if self[square].equal?(piece)
     end
+    raise "piece not on board"
   end
   
   def empty?(square)

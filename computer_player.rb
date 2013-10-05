@@ -5,7 +5,7 @@ class ComputerPlayer
   
   def initialize(color)
     @color = color
-    @depth = 6
+    @depth = 1
   end
   
   def play_turn(board)

@@ -60,6 +60,15 @@ class Piece
     @color == :black ? :red : :black
   end
   
+  def inspect
+    { id: self.object_id,
+      board: @board.object_id,
+      color: @color,
+      king: @king,
+      location: self.location
+    }.inspect
+  end
+  
   protected
   
   def perform_moves!(moves)
@@ -78,9 +87,11 @@ class Piece
   end
   
   def jump_moves
-    jump_nodes.map do |nodes| 
-      nodes.map { |node| trace_path(node)  }
-    end.flatten(1)
+    nodes = jump_nodes
+    return [] if nodes.nil?
+    nodes.flatten.map do |node| 
+      trace_path(node)
+    end
   end
   
   def perform_jump!(dest_square)
@@ -96,8 +107,10 @@ class Piece
       child_piece = dup_and_jump(jump)
       child_piece.jump_nodes(self_node)
     end
-    if children.empty?
-      return self_node
+    if children.empty? && parent.nil?
+      return nil
+    elsif children.empty?
+      return [self_node]
     else
       return children
     end
@@ -151,6 +164,7 @@ class Piece
   def trace_path(jump_node)
     path = []
     curr_node = jump_node
+
     until curr_node.nil?
       path.unshift(curr_node.piece.location)
       curr_node = curr_node.parent

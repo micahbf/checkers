@@ -16,6 +16,7 @@ class Checkers
       current_player = (current_player == :black) ? :red : :black
       @players[current_player].play_turn(@board)
       @board.render
+      gets
     end
     
     puts "#{current_player} wins!"

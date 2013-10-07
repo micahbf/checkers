@@ -5,8 +5,8 @@ require_relative 'computer_player'
 class Checkers
   def initialize
     @players = {
-      :black => ComputerPlayer.new(:black),
-      :red => ComputerPlayer.new(:red)
+      :black => ComputerPlayer.new(:black, 2),
+      :red => ComputerPlayer.new(:red, 2)
     }
     @board = Board.new(@players)
   end

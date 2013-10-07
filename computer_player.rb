@@ -3,13 +3,14 @@ require_relative 'negamax'
 class ComputerPlayer
   include Negamax
   
-  def initialize(color)
+  def initialize(color, depth)
     @color = color
-    @depth = 1
+    @depth = depth
   end
   
   def play_turn(board)
     move = best_move(board)
+    puts "#{@color}: #{move}"
     play_move(board, move)
   end
   

@@ -74,7 +74,6 @@ class Piece
   def perform_moves!(moves)
     jumps_only = (moves.count > 1) ? true : false
     moves.each do |move|
-      puts "moves: #{moves} location: #{location} move: #{move}"
       if slide_moves.include?([move])
         raise InvalidMoveError, "Piece must jump" if jumps_only
         perform_slide(move)

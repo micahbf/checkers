@@ -1,8 +1,11 @@
 require_relative 'piece'
 require_relative 'human_player'
+require_relative 'board_evaluation'
 require 'colorize'
 
 class Board
+  include BoardEvaluation
+  
   ROWS = "abcdefgh"
     
   def initialize(players, fill_board = true)
@@ -13,9 +16,9 @@ class Board
   
   def piece_coord(piece)
     squares.each do |square|
-      row, col = square
       return square if self[square].equal?(piece)
     end
+    raise "piece not on board"
   end
   
   def empty?(square)
@@ -69,8 +72,10 @@ class Board
     false
   end
   
-  def pieces
-    @rows.flatten.compact
+  def pieces(color = nil)
+    pieces = @rows.flatten.compact
+    pieces.select! { |p| p.color == color } if color
+    pieces
   end
   
   protected

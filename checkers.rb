@@ -5,8 +5,8 @@ require_relative 'computer_player'
 class Checkers
   def initialize
     @players = {
-      :black => HumanPlayer.new(:black),
-      :red => HumanPlayer.new(:red)
+      :black => ComputerPlayer.new(:black, 2),
+      :red => ComputerPlayer.new(:red, 2)
     }
     @board = Board.new(@players)
   end
@@ -15,6 +15,8 @@ class Checkers
     until @board.won?
       current_player = (current_player == :black) ? :red : :black
       @players[current_player].play_turn(@board)
+      @board.render
+      gets
     end
     
     puts "#{current_player} wins!"
